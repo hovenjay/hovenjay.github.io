@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文将教大家如何使用 VIsual Studio Code 搭建 C 语言开发环境，包括使用 VS Code 如何编译和调试 C 语言程序，需要用到的工具有 Visual Studio Code 、MinGw-w64 。  1. 安装 C/C++ 插件C/C++ 是由 Microsoft 发布的支持 C/C++ 智能提示和调试等功能的插件，安装步骤如下：  使用快捷键 Ctrl + Shift">
+<meta name="keywords" content="Visual Studio Code,C&#x2F;C++,MinGW-w64">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 Windows 下使用 Visual Studio Code 搭建 C 语言开发环境">
+<meta property="og:url" content="http://yoursite.com/2018/06/01/VSCodeC/index.html">
+<meta property="og:site_name" content="Jason&#39;s Blog">
+<meta property="og:description" content="本文将教大家如何使用 VIsual Studio Code 搭建 C 语言开发环境，包括使用 VS Code 如何编译和调试 C 语言程序，需要用到的工具有 Visual Studio Code 、MinGw-w64 。  1. 安装 C/C++ 插件C/C++ 是由 Microsoft 发布的支持 C/C++ 智能提示和调试等功能的插件，安装步骤如下：  使用快捷键 Ctrl + Shift">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-01.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-09.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-02.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-03.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-04.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-05.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-06.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-07.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-08.png">
+<meta property="og:image" content="http://yoursite.com/images/2018-06-01_12-44-10.png">
+<meta property="og:updated_time" content="2018-06-10T04:59:57.423Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在 Windows 下使用 Visual Studio Code 搭建 C 语言开发环境">
+<meta name="twitter:description" content="本文将教大家如何使用 VIsual Studio Code 搭建 C 语言开发环境，包括使用 VS Code 如何编译和调试 C 语言程序，需要用到的工具有 Visual Studio Code 、MinGw-w64 。  1. 安装 C/C++ 插件C/C++ 是由 Microsoft 发布的支持 C/C++ 智能提示和调试等功能的插件，安装步骤如下：  使用快捷键 Ctrl + Shift">
+<meta name="twitter:image" content="http://yoursite.com/images/2018-06-01_12-44-01.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/01/VSCodeC/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>在 Windows 下使用 Visual Studio Code 搭建 C 语言开发环境 | Jason's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jason's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Never Ceased To Explore.</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/01/VSCodeC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="程序猿一枚">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jason's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">在 Windows 下使用 Visual Studio Code 搭建 C 语言开发环境
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-06-01 12:49:56" itemprop="dateCreated datePublished" datetime="2018-06-01T12:49:56+08:00">2018-06-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-06-10 12:59:57" itemprop="dateModified" datetime="2018-06-10T12:59:57+08:00">2018-06-10</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/开发工具/" itemprop="url" rel="index"><span itemprop="name">开发工具</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本文将教大家如何使用 VIsual Studio Code 搭建 C 语言开发环境，包括使用 VS Code 如何编译和调试 C 语言程序，需要用到的工具有 Visual Studio Code 、MinGw-w64 。</p>
+</blockquote>
+<h4 id="1-安装-C-C-插件"><a href="#1-安装-C-C-插件" class="headerlink" title="1. 安装 C/C++ 插件"></a>1. 安装 C/C++ 插件</h4><p>C/C++ 是由 Microsoft 发布的支持 C/C++ 智能提示和调试等功能的插件，安装步骤如下：</p>
+<ul>
+<li>使用快捷键 <code>Ctrl + Shift + X</code> 呼出扩展面板</li>
+<li>在搜索框中输入：C/C++</li>
+<li>再安装由 Microsoft 提供的名为 C/C++ 插件。</li>
+</ul>
+<a id="more"></a>
+<p><img src="/images/2018-06-01_12-44-01.png" alt=""></p>
+<h4 id="2-安装-MinGW-w64-并配置好环境变量"><a href="#2-安装-MinGW-w64-并配置好环境变量" class="headerlink" title="2. 安装 MinGW-w64 并配置好环境变量"></a>2. 安装 MinGW-w64 并配置好环境变量</h4><p>首先下载 MinGW-w64 <a href="https://sourceforge.net/projects/mingw-w64" target="_blank" rel="noopener">点这里下载 MinGW-w64</a> 。下载完成之后我们开始安装 MinGw-w64，安装路径可以自由定义，我这里安装路径为 <code>D:\App\MinGW</code> 。安装时需要设置的安装选项如下：</p>
+<ul>
+<li>Version ：GCC 版本，直接选最高；</li>
+<li>Architecture ：CPU 架构，系统如果为64位，则选择 x86_64；</li>
+<li>Threads ：API 模式，使用默认选项；</li>
+<li>Exception ：异常处理方式，seh 仅针对 64 位架构，sjlj 则兼容 32 位架构；</li>
+<li>Build revision ：修订版本，使用默认选项；</li>
+</ul>
+<p><img src="/images/2018-06-01_12-44-09.png" alt=""></p>
+<p>安装过程中需要联网下载部分文件，由于网络问题安装失败的，可以 <a href="https://pan.baidu.com/s/1FPbjwCaz782trvuBRbLsUg" target="_blank" rel="noopener">点这里下载</a> 免安装版本。下载后直接解压在你想安装的文件夹。</p>
+<p>然后我们要在安装路径中找到 bin 文件夹，通常在 <code>${MinGW-w64安装位置}\mingw64\bin</code> ，以我的安装路径为例，bin 文件夹位于 <code>D:\App\MinGW\mingw64\bin</code> 。</p>
+<p>接下来，我们将刚刚获取的 bin 文件夹的路径添加到系统环境变量。</p>
+<ul>
+<li>按 <code>Win + R</code> 键，打开运行窗口，，输入 <code>sysdm.cpl</code> 并回车；</li>
+<li>在弹出的 <code>系统属性</code> 窗口，选择 <code>高级</code> 选项卡；</li>
+<li>在  <code>高级</code> 选项卡找到 <code>环境变量</code> 按钮，单击 <code>环境变量</code> 按钮，打开 <code>环境变量</code> 窗口 ；</li>
+<li>在 <code>环境变量</code> 窗口的 <code>系统变量</code> 区域找到 <code>Path</code> 变量 ，双击 <code>Path</code> 出现 <code>编辑环境变量</code> 窗口；</li>
+<li>在 <code>编辑环境变量</code> 窗口点击 <code>新建</code>，在新建的这行输入我们刚刚获取的 bin 文件夹的路径，然后点确定。</li>
+</ul>
+<p><img src="/images/2018-06-01_12-44-02.png" alt=""></p>
+<h4 id="3-测试环境变量是否配置正确"><a href="#3-测试环境变量是否配置正确" class="headerlink" title="3. 测试环境变量是否配置正确"></a>3. 测试环境变量是否配置正确</h4><p>在命令行输入 gcc –version，如果返回的是已安装的 gcc 的版本信息，那么环境变量就配置正确了。</p>
+<p>下面是在我的电脑上输入 gcc –version 的结果，可以看到我安装的版本为：gcc 7.3.0</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\Jason&gt; gcc --version</span><br><span class="line">gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-W64 project) <span class="number">7.3</span>.<span class="number">0</span></span><br><span class="line">Copyright (C) <span class="number">2017</span> Free Software Foundation, Inc.</span><br><span class="line">This is free software; see the source <span class="keyword">for</span> copying conditions.  There is NO</span><br><span class="line">warranty; not even <span class="keyword">for</span> MERCHANTABILITY or FITNESS <span class="keyword">FOR</span> A PARTICULAR PURPOSE.</span><br></pre></td></tr></table></figure>
+<h4 id="4-创建和设置-C-语言开发工作区"><a href="#4-创建和设置-C-语言开发工作区" class="headerlink" title="4. 创建和设置 C 语言开发工作区"></a>4. 创建和设置 C 语言开发工作区</h4><p>在你的计算机中选择一个合适的位置，作为你的 C 语言开发工作区。建议工作区所在路径仅由字母、数字、下划线组成，不要包含其他的符号。例如空格，空格符号常常作为命令行中命令和参数的间隔符，如果路径包含空格会导致编译时出错。我创建的工作区的路径为：<code>D:\Study\C\WorkSpace</code></p>
+<p>由于 Windows 中文版命令行输出字符是 GB2312 编码的，而 VS Code 工作区默认是 UTF-8 ，这会导致你编写的 C 代码编译后在命令行执行并查看结果时中文会显示乱码，所以我们要单独针对工作区进行设置字符编码，保证程序输出的字符也采用跟命令行一致的 GB2312 编码，步骤如下：</p>
+<ul>
+<li>使用 VS Code 打开你创建的工作区；</li>
+<li>在 VS Code 左下角的设置按钮进设置，再点击 <code>用户设置</code> 旁边的 <code>工作区设置</code> ；</li>
+<li>在 <code>工作区设置</code> 中添加 <code>&quot;files.encoding&quot;:&quot;gb2312&quot;</code></li>
+</ul>
+<p><img src="/images/2018-06-01_12-44-03.png" alt=""></p>
+<h4 id="5-编写你的第一个-C-语言程序"><a href="#5-编写你的第一个-C-语言程序" class="headerlink" title="5. 编写你的第一个 C 语言程序"></a>5. 编写你的第一个 C 语言程序</h4><p>在工作区新建一个 C 语言源文件命名为 hello.c ，输入以下内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello world!/n"</span>);</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6-配置导入的头文件参数-c-cpp-properties-json"><a href="#6-配置导入的头文件参数-c-cpp-properties-json" class="headerlink" title="6. 配置导入的头文件参数 c_cpp_properties.json"></a>6. 配置导入的头文件参数 c_cpp_properties.json</h4><p>在编写完毕并保存之后，你可能会看到 #include 这句下面会有绿色波浪线，这是由于编译器没办法找到你所使用的头文件的所在位置。将光标移动到该行，行号左边会出现 <code>黄色小灯泡</code> ，点击会出现一个提示按钮：<code>Add include path to setting</code> ，继续点击该提示，则会在工作区 <code>.vscode</code> 下生成 <code>c_cpp_properties.json</code> 文件。将文件修改成下面内容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"configurations"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"name"</span>: <span class="string">"Win32"</span>,</span><br><span class="line">            <span class="attr">"intelliSenseMode"</span>: <span class="string">"msvc-x64"</span>,</span><br><span class="line">            <span class="attr">"includePath"</span>: [</span><br><span class="line">                <span class="string">"$&#123;workspaceFolder&#125;"</span>,</span><br><span class="line">                // 下面路径中的 D:/App/MinGw 部分需要替换成你的 MinGw-w64 安装路径</span><br><span class="line">                <span class="string">"D:/App/MinGW/mingw64/include"</span>,</span><br><span class="line">                <span class="string">"D:/App/MinGW/mingw64/opt/include"</span>,</span><br><span class="line">                <span class="string">"D:/App/MinGW/mingw64/opt/lib/libffi-3.2.1/include"</span>,</span><br><span class="line">                <span class="string">"D:/App/MinGW/mingw64/x86_64-w64-mingw32/include"</span>,</span><br><span class="line">                <span class="string">"D:/App/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include"</span>,</span><br><span class="line">                <span class="string">"D:/App/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed"</span>,</span><br><span class="line">                <span class="string">"D:/App/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/install-tools/include"</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">"defines"</span>: [</span><br><span class="line">                <span class="string">"_DEBUG"</span>,</span><br><span class="line">                <span class="string">"UNICODE"</span>,</span><br><span class="line">                <span class="string">"__GNUC__=7"</span>,</span><br><span class="line">                <span class="string">"__cdecl=__attribute__((__cdecl__))"</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">"browse"</span>: &#123;</span><br><span class="line">                <span class="attr">"path"</span>: [</span><br><span class="line">                    <span class="string">"$&#123;workspaceFolder&#125;"</span>,</span><br><span class="line">                    // 下面路径中的 D:/App/MinGw 部分需要替换成你的 MinGw-w64 安装路径</span><br><span class="line">                    <span class="string">"D:/App/MinGW/mingw64/include"</span>,</span><br><span class="line">                    <span class="string">"D:/App/MinGW/mingw64/opt/include"</span>,</span><br><span class="line">                    <span class="string">"D:/App/MinGW/mingw64/opt/lib/libffi-3.2.1/include"</span>,</span><br><span class="line">                    <span class="string">"D:/App/MinGW/mingw64/x86_64-w64-mingw32/include"</span>,</span><br><span class="line">                    <span class="string">"D:/App/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include"</span>,</span><br><span class="line">                    <span class="string">"D:/App/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed"</span>,</span><br><span class="line">                    <span class="string">"D:/App/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/install-tools/include"</span></span><br><span class="line">                ],</span><br><span class="line">                <span class="attr">"limitSymbolsToIncludedHeaders"</span>: <span class="literal">true</span>,</span><br><span class="line">                <span class="attr">"databaseFilename"</span>: <span class="string">""</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">"cStandard"</span>: <span class="string">"c11"</span>,</span><br><span class="line">            <span class="attr">"cppStandard"</span>: <span class="string">"c++17"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"version"</span>: <span class="number">4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><em>留意带注释部分的内容，需要将路径修改成你自己的安装路径哦。</em></p>
+<h4 id="7-配置调试程序-launch-json"><a href="#7-配置调试程序-launch-json" class="headerlink" title="7. 配置调试程序 launch.json"></a>7. 配置调试程序 launch.json</h4><p>打开已经编写好的 hello.c ，然后按 <code>F5</code> 调试。因为是第一次调试，系统会弹出 <code>选择环境</code> 面板，这里选择 <code>C++(GDB/LLDB)</code> 。</p>
+<p><img src="/images/2018-06-01_12-44-04.png" alt=""></p>
+<p>选择运行环境后，VS Code 会在工作区 <code>.vscode</code> 文件夹下创建 <code>luanch.json</code> 模板文件并打开，将文件内容清空，复制下面的内容到文件中并保存：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    "version": "0.2.0", //配置版本</span><br><span class="line">    "configurations": [</span><br><span class="line">        &#123;</span><br><span class="line">            // 配置名称，在启动配置下拉菜单中显示</span><br><span class="line">            "name": "(gdb) Launch",</span><br><span class="line">            // 调试会话开始前要运行的任务</span><br><span class="line">            "preLaunchTask": "build",</span><br><span class="line">            // 配置类型</span><br><span class="line">            "type": "cppdbg",</span><br><span class="line">            // 请求配置类型，可以为启动（launch）或附加（attach）</span><br><span class="line">            "request": "launch",</span><br><span class="line">            // 将要进行调试的程序的路径</span><br><span class="line">            "program": "$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;.exe",</span><br><span class="line">            // 程序调试时传递给程序的命令行参数，一般设为空即可</span><br><span class="line">            "args": [],</span><br><span class="line">            // 设为true时程序将暂停在程序入口处，一般设置为false</span><br><span class="line">            "stopAtEntry": false,</span><br><span class="line">            // 调试程序时的工作目录，一般为$&#123;workspaceFolder&#125;即代码所在目录</span><br><span class="line">            "cwd": "$&#123;workspaceFolder&#125;",</span><br><span class="line">            "environment": [],</span><br><span class="line">            // 调试时是否显示控制台窗口，一般设置为true显示控制台</span><br><span class="line">            "externalConsole": true,</span><br><span class="line">            "MIMode": "gdb",</span><br><span class="line">            // GDB的路径，注意替换成自己的位置中的 gdb</span><br><span class="line">            "miDebuggerPath": "D:/App/MinGW/mingw64/bin/gdb.exe",</span><br><span class="line">            "setupCommands": [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">"description"</span>: <span class="string">"Enable pretty-printing for gdb"</span>,</span><br><span class="line">                    <span class="attr">"text"</span>: <span class="string">"-enable-pretty-printing"</span>,</span><br><span class="line">                    <span class="attr">"ignoreFailures"</span>: <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>留意</strong> <code>luanch.json</code> <strong>中注释内容</strong>，记得把 “miDebuggerPath” 参数修改成你自己安装位置里的 <code>gdb.exe</code></p>
+<p><code>gdb.exe</code> 位于 <code>{MinGW-w64安装位置}\mingw64\bin</code> 下面。</p>
+<h4 id="8-配置调试前执行的任务-task-json"><a href="#8-配置调试前执行的任务-task-json" class="headerlink" title="8. 配置调试前执行的任务 task.json"></a>8. 配置调试前执行的任务 task.json</h4><p>再按一次 <code>F5</code> ，会弹出“找不到任务”的提示窗口，点击 <code>配置任务</code> 按钮，如下图所示：</p>
+<p><img src="/images/2018-06-01_12-44-05.png" alt=""></p>
+<p>然后在弹出的命令面板选择 <code>使用模板创建 task.json 文件</code> ，如下图所示：</p>
+<p><img src="/images/2018-06-01_12-44-06.png" alt=""></p>
+<p>继续选择 <code>Others 运行任意外部命令的示例</code> ，如下图所示：</p>
+<p><img src="/images/2018-06-01_12-44-07.png" alt=""></p>
+<p>完成以上步骤之后，会在工作区的 <code>.vscode</code> 目录下生成 <code>tasks.json</code> 文件，并自动打开 <code>task.json</code> 文件。</p>
+<p><img src="/images/2018-06-01_12-44-08.png" alt=""></p>
+<p>接下来我们将 <code>task.json</code> 文件内容清空，复制下面的内容到文件中并保存：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"2.0.0"</span>,</span><br><span class="line">    <span class="attr">"tasks"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"label"</span>: <span class="string">"build"</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"shell"</span>,</span><br><span class="line">            // 编译参数 ggc -g $&#123;file&#125; -o $&#123;fileDirname&#125;$&#123;fileBasenameNoExtension&#125;.exe</span><br><span class="line">            "windows": &#123;</span><br><span class="line">                "command": "gcc",</span><br><span class="line">                "args": [</span><br><span class="line">                    "-g",</span><br><span class="line">                    "\"$&#123;file&#125;\"",</span><br><span class="line">                    "-o",</span><br><span class="line">                    <span class="string">"\"$&#123;fileDirname&#125;\\$&#123;fileBasenameNoExtension&#125;.exe\""</span></span><br><span class="line">                ]</span><br><span class="line">            &#125;,</span><br><span class="line">            // 控制台输出的错误信息</span><br><span class="line">            "problemMatcher": &#123;</span><br><span class="line">                "owner": "cpp",</span><br><span class="line">                "fileLocation": [</span><br><span class="line">                    "relative",</span><br><span class="line">                    "." // $&#123;workspaceFolder&#125;</span><br><span class="line">                ],</span><br><span class="line">                "pattern": &#123;</span><br><span class="line">                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",</span><br><span class="line">                    "file": 1,</span><br><span class="line">                    "line": 2,</span><br><span class="line">                    "column": 3,</span><br><span class="line">                    "severity": 4,</span><br><span class="line">                    "message": 5</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            "group": &#123;</span><br><span class="line">                "kind": "build",</span><br><span class="line">                "isDefault": true</span><br><span class="line">            &#125;,</span><br><span class="line">            // 终端面板配置</span><br><span class="line">            "presentation": &#123;</span><br><span class="line">                "echo": true,</span><br><span class="line">                "reveal": "always",</span><br><span class="line">                "focus": false,</span><br><span class="line">                "panel": "shared" // 控制面板是否在任务中共享面板，shared=共享，new=新面板</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="9-完成"><a href="#9-完成" class="headerlink" title="9. 完成"></a>9. 完成</h4><p>到这里，C 开发环境就已经配置完毕。接下来我们在 hello.c 的编辑窗口按 <code>F5</code> 运行下，看下效果。</p>
+<p><img src="/images/2018-06-01_12-44-10.png" alt=""></p>
+<p>如果你还想再创建其他的 C 语言开发工作区，我们只需要新建一个文件夹，再把现在已有工作区目录下的 <code>.vscode</code> 文件夹复制到新建的文件夹即可。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="Jason wechat" style="width: 200px; max-width: 100%;"/>
+    <div>更多内容关注请微信公众号</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Visual-Studio-Code/" rel="tag"># Visual Studio Code</a>
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/MinGW-w64/" rel="tag"># MinGW-w64</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="Jason" />
+            
+              <p class="site-author-name" itemprop="name">Jason</p>
+              <p class="site-description motion-element" itemprop="description">程序猿一枚</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/hovenjay" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:hewenjie1996@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://segmentfault.com/blog/jasonhe" target="_blank" title="思否"><i class="fa fa-fw fa-globe"></i>思否</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://zhihu.com/people/hovenjay" target="_blank" title="知乎"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://chunrichi.github.io/" title="石头的博客" target="_blank">石头的博客</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-安装-C-C-插件"><span class="nav-text">1. 安装 C/C++ 插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-安装-MinGW-w64-并配置好环境变量"><span class="nav-text">2. 安装 MinGW-w64 并配置好环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-测试环境变量是否配置正确"><span class="nav-text">3. 测试环境变量是否配置正确</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-创建和设置-C-语言开发工作区"><span class="nav-text">4. 创建和设置 C 语言开发工作区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-编写你的第一个-C-语言程序"><span class="nav-text">5. 编写你的第一个 C 语言程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-配置导入的头文件参数-c-cpp-properties-json"><span class="nav-text">6. 配置导入的头文件参数 c_cpp_properties.json</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-配置调试程序-launch-json"><span class="nav-text">7. 配置调试程序 launch.json</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-配置调试前执行的任务-task-json"><span class="nav-text">8. 配置调试前执行的任务 task.json</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#9-完成"><span class="nav-text">9. 完成</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
