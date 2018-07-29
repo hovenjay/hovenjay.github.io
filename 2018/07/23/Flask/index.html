@@ -109,14 +109,14 @@
 
 
   <meta name="description" content="1. 引言 Flask是一个使用 Python 编写的轻量级 Web 应用框架。其 WSGI 工具箱采用 Werkzeug ，模板引擎则使用 Jinja2 。Flask使用 BSD 授权。 Flask也被称为 “microframework” ，因为它使用简单的核心，用 extension 增加其他功能。Flask没有默认使用的数据库、窗体验证工具。 然而，Flask保留了扩增的弹性，可以用Fla">
-<meta name="keywords" content="C&#x2F;C++,MinGW-w64,Python,Windows,Flask">
+<meta name="keywords" content="Python,Windows,Flask,C&#x2F;C++,MinGW-w64">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python 轻量级 Web 应用框架 Flask 快速入门">
 <meta property="og:url" content="http://yoursite.com/2018/07/23/Flask/index.html">
 <meta property="og:site_name" content="Jason&#39;s Blog">
 <meta property="og:description" content="1. 引言 Flask是一个使用 Python 编写的轻量级 Web 应用框架。其 WSGI 工具箱采用 Werkzeug ，模板引擎则使用 Jinja2 。Flask使用 BSD 授权。 Flask也被称为 “microframework” ，因为它使用简单的核心，用 extension 增加其他功能。Flask没有默认使用的数据库、窗体验证工具。 然而，Flask保留了扩增的弹性，可以用Fla">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-07-23T09:10:40.241Z">
+<meta property="og:updated_time" content="2018-07-29T02:25:12.048Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python 轻量级 Web 应用框架 Flask 快速入门">
 <meta name="twitter:description" content="1. 引言 Flask是一个使用 Python 编写的轻量级 Web 应用框架。其 WSGI 工具箱采用 Werkzeug ，模板引擎则使用 Jinja2 。Flask使用 BSD 授权。 Flask也被称为 “microframework” ，因为它使用简单的核心，用 extension 增加其他功能。Flask没有默认使用的数据库、窗体验证工具。 然而，Flask保留了扩增的弹性，可以用Fla">
@@ -343,12 +343,24 @@
                 
               
 
-              <time title="创建时间：2018-07-23 14:07:15 / 修改时间：17:10:40" itemprop="dateCreated datePublished" datetime="2018-07-23T14:07:15+08:00">2018-07-23</time>
+              <time title="创建时间：2018-07-23 14:07:15" itemprop="dateCreated datePublished" datetime="2018-07-23T14:07:15+08:00">2018-07-23</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-29 10:25:12" itemprop="dateModified" datetime="2018-07-29T10:25:12+08:00">2018-07-29</time>
               
             
           </span>
@@ -429,7 +441,14 @@
 <p>然后在任意位置创建你的 web 项目工作目录。我创建的工作目录位于 <code>C:\Users\Jason\Desktop\web&gt;</code> 中。</p>
 <p>创建完毕后，在命令行打开该工作目录，然后执行 <code>virtualenv venv</code> 命令创建虚拟工作环境，执行完毕后会出现如下提示：</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(venv) (base) C:\Users\Jason\Desktop\web&gt;virtualenv venv</span><br><span class="line">Using base prefix <span class="string">'c:\\users\\jason\\anaconda3'</span></span><br><span class="line">New python executable <span class="keyword">in</span> C:\Users\Jason\Desktop\web\venv\Scripts\python.exe</span><br><span class="line">Installing setuptools, pip, wheel...</span><br></pre></td></tr></table></figure>
-<p>然后使用 <code>venv\scripts\activate</code> 命令即可开启虚拟机。</p>
+<p>然后使用 <code>venv\scripts\activate</code> 命令即可开启虚拟机。<strong>Windows 执行该命令可能会出现如下错误提示</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">无法加载文件 C:\Users\Jason\Desktop\web\venv\Scripts\activate.ps1，因为在此系统上禁止运行脚本。有关详细信息，请参阅 https:/go.microsoft.com/fwlink/?LinkID=135170 中的 about_Execution_Policies。</span><br></pre></td></tr></table></figure>
+<p><strong>解决方案如下</strong>：</p>
+<ol>
+<li>以管理员身份打开 PowerShell</li>
+<li>执行命令 <code>set-executionpolicy remotesigned</code></li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">执行策略更改</span><br><span class="line">执行策略可帮助你防止执行不信任的脚本。更改执行策略可能会产生安全风险，如 https:/go.microsoft.com/fwlink/?LinkID=<span class="number">135170</span></span><br><span class="line">中的 about_Execution_Policies 帮助主题所述。是否要更改执行策略?</span><br><span class="line">[Y] 是(Y)  [A] 全是(A)  [N] 否(N)  [L] 全否(L)  [S] 暂停(S)  [?] 帮助 (默认值为“N”): Y</span><br></pre></td></tr></table></figure>
 <h3 id="2-2-安装-Flask"><a href="#2-2-安装-Flask" class="headerlink" title="2.2 安装 Flask"></a>2.2 安装 Flask</h3><p>在命令行执行 <code>pip install Flask</code> 即可安装 flask，如果系统中已经安装过了 flask，就会出现下面的提示：</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(venv) (base) C:\Users\Jason\Desktop\web&gt;pip install Flask</span><br><span class="line">Requirement already satisfied: Flask <span class="keyword">in</span> c:\users\jason\anaconda3\lib\site-packages (<span class="number">1.0</span>.<span class="number">2</span>)</span><br><span class="line">Requirement already satisfied: itsdangerous&gt;=<span class="number">0.24</span> <span class="keyword">in</span> c:\users\jason\anaconda3\lib\site-packages (from Flask) (<span class="number">0.24</span>)</span><br><span class="line">Requirement already satisfied: Jinja2&gt;=<span class="number">2.10</span> <span class="keyword">in</span> c:\users\jason\anaconda3\lib\site-packages (from Flask) (<span class="number">2.10</span>)</span><br><span class="line">Requirement already satisfied: click&gt;=<span class="number">5.1</span> <span class="keyword">in</span> c:\users\jason\anaconda3\lib\site-packages (from Flask) (<span class="number">6.7</span>)</span><br><span class="line">Requirement already satisfied: Werkzeug&gt;=<span class="number">0.14</span> <span class="keyword">in</span> c:\users\jason\anaconda3\lib\site-packages (from Flask) (<span class="number">0.14</span>.<span class="number">1</span>)</span><br><span class="line">Requirement already satisfied: MarkupSafe&gt;=<span class="number">0.23</span> <span class="keyword">in</span> c:\users\jason\anaconda3\lib\site-packages (from Jinja2&gt;=<span class="number">2.10</span>-&gt;Flask) (<span class="number">1.0</span>)</span><br></pre></td></tr></table></figure>
 <h2 id="3-一个最小的应用"><a href="#3-一个最小的应用" class="headerlink" title="3. 一个最小的应用"></a>3. 一个最小的应用</h2><p>在工作目录下新建一个 hello.py 文件：</p>
@@ -464,15 +483,15 @@
       
         <div class="post-tags">
           
-            <a href="/tags/C-C/" rel="tag"># C/C++</a>
-          
-            <a href="/tags/MinGW-w64/" rel="tag"># MinGW-w64</a>
-          
             <a href="/tags/Python/" rel="tag"># Python</a>
           
             <a href="/tags/Windows/" rel="tag"># Windows</a>
           
             <a href="/tags/Flask/" rel="tag"># Flask</a>
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/MinGW-w64/" rel="tag"># MinGW-w64</a>
           
         </div>
       
