@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="当我们开发了一个简单的 Flask 程序，想把项目部署上线，我们可以选择传统的部署方式或者云部署方式把项目部署上线。在本文中，笔者将使用 阿里云轻量应用服务器 安装 CentOS 7 系统部署一个简单的 Flask 项目。">
+<meta name="keywords" content="Python,Flask,CentOS,Pipenv,Gunicorn,Supervisor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="部署 Flask 项目到阿里云 ECS">
+<meta property="og:url" content="http://yoursite.com/2019/02/06/部署Flask项目到阿里云ECS/index.html">
+<meta property="og:site_name" content="Jason&#39;s Blog">
+<meta property="og:description" content="当我们开发了一个简单的 Flask 程序，想把项目部署上线，我们可以选择传统的部署方式或者云部署方式把项目部署上线。在本文中，笔者将使用 阿里云轻量应用服务器 安装 CentOS 7 系统部署一个简单的 Flask 项目。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/02/06/部署Flask项目到阿里云ECS/1549437041.png">
+<meta property="og:updated_time" content="2019-02-06T13:48:58.488Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="部署 Flask 项目到阿里云 ECS">
+<meta name="twitter:description" content="当我们开发了一个简单的 Flask 程序，想把项目部署上线，我们可以选择传统的部署方式或者云部署方式把项目部署上线。在本文中，笔者将使用 阿里云轻量应用服务器 安装 CentOS 7 系统部署一个简单的 Flask 项目。">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/06/部署Flask项目到阿里云ECS/1549437041.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/06/部署Flask项目到阿里云ECS/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>部署 Flask 项目到阿里云 ECS | Jason's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jason's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Never Ceased To Explore.</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/06/部署Flask项目到阿里云ECS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="程序猿一枚">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jason's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">部署 Flask 项目到阿里云 ECS
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-06 13:25:39 / 修改时间：21:48:58" itemprop="dateCreated datePublished" datetime="2019-02-06T13:25:39+08:00">2019-02-06</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>当我们开发了一个简单的 Flask 程序，想把项目部署上线，我们可以选择传统的部署方式或者云部署方式把项目部署上线。在本文中，笔者将使用 <code>阿里云轻量应用服务器</code> 安装 <code>CentOS 7</code> 系统部署一个简单的 Flask 项目。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="1-购买域名、服务器、SSL-证书"><a href="#1-购买域名、服务器、SSL-证书" class="headerlink" title="1. 购买域名、服务器、SSL 证书"></a>1. 购买域名、服务器、SSL 证书</h2><p>要部署一个网站，首先要做的就是购买域名和服务器，市面上主要有阿里云、腾讯云、亚马逊云等云服务器供应商，你可以自由选择。除了域名和服务器外，还需要申请 SSL 证书，为开启 HTTPS 访问做准备。</p>
+<h3 id="1-1-域名"><a href="#1-1-域名" class="headerlink" title="1.1 域名"></a>1.1 域名</h3><p>对于还从未购买过域名的用户，推荐使用阿里云和腾讯云购买域名，可以享受一元首购优惠。</p>
+<ul>
+<li><p><a href="https://yq.aliyun.com/articles/637307" title="阿里云申请免费SSL证书实现网站HTTPS化" target="_blank" rel="noopener">阿里云</a>: <a href="https://wanwang.aliyun.com/domain/1yuan" target="_blank" rel="noopener">https://wanwang.aliyun.com/domain/1yuan</a>    “域名1元购专题”</p>
+</li>
+<li><p><a href="https://cloud.tencent.com/developer/article/1382798" title="手把手教你申请腾讯云免费SSL证书" target="_blank" rel="noopener">腾讯云</a>: <a href="https://cloud.tencent.com/act/domainsales" target="_blank" rel="noopener">https://cloud.tencent.com/act/domainsales</a>    “特价域名1元起，免费送SSL证书”</p>
+</li>
+</ul>
+<h3 id="1-2-服务器"><a href="#1-2-服务器" class="headerlink" title="1.2 服务器"></a>1.2 服务器</h3><p>阿里云和腾讯云针对有专门针对学生的学生机，价格非常实惠。其中阿里云是只要你的年龄 24 岁以下自动认定为大学生，可以尝试一下。</p>
+<ul>
+<li><p><a href="https://yq.aliyun.com/articles/637307" title="阿里云申请免费SSL证书实现网站HTTPS化" target="_blank" rel="noopener">阿里云</a>: <a href="https://promotion.aliyun.com/ntms/act/campus2018.html" target="_blank" rel="noopener">https://promotion.aliyun.com/ntms/act/campus2018.html</a>    “云翼计划2018”</p>
+</li>
+<li><p><a href="https://cloud.tencent.com/developer/article/1382798" title="手把手教你申请腾讯云免费SSL证书" target="_blank" rel="noopener">腾讯云</a>: <a href="https://cloud.tencent.com/act/campus" target="_blank" rel="noopener">https://cloud.tencent.com/act/campus</a>    “云+校园”</p>
+</li>
+</ul>
+<h3 id="1-3-SSL-证书"><a href="#1-3-SSL-证书" class="headerlink" title="1.3 SSL 证书"></a>1.3 SSL 证书</h3><p>SSL证书是数字证书的一种，类似于驾驶证、护照和营业执照的电子副本。因为配置在服务器上，也称为SSL服务器证书。SSL 证书就是遵守 SSL 协议，由受信任的数字证书颁发机构 CA ，在验证服务器身份后颁发，具有服务器身份验证和数据传输加密功能。</p>
+<p>阿里云和腾讯云控制台都提供了 SSL 证书购买的功能，对于需要付费的 SSL 证书，你可以直接挑选一个价格合适的然后付钱即可。如果想申请免费的 SSL 证书，可以直接参考下方链接：</p>
+<h2 id="2-网站备案"><a href="#2-网站备案" class="headerlink" title="2. 网站备案"></a>2. 网站备案</h2><p>备案是指向主管机关报告事由存案以备查考。行政法角度看备案，实践中主要是《立法法》和《法规规章备案条例》的规定。根据中华人民共和国信息产业部第十二次部务会议审议通过的《非经营性互联网信息服务备案管理办法》精神，在中华人民共和国境内提供非经营性互联网信息服务，应当办理备案。未经备案，不得在中华人民共和国境内从事非经营性互联网信息服务。而对于没有备案的网站将予以罚款和关闭。</p>
+<p>简单来说，购买了服务器之后，如果希望通过域名能正常访问到您的网站，就需要进行网站备案。</p>
+<ul>
+<li><p>[阿里云网站备案 帮助文档]: <a href="https://help.aliyun.com/document_detail/61819.html" target="_blank" rel="noopener">https://help.aliyun.com/document_detail/61819.html</a></p>
+</li>
+<li><p>[腾讯云网站备案 帮助文档]: <a href="https://cloud.tencent.com/document/product/243/18958" target="_blank" rel="noopener">https://cloud.tencent.com/document/product/243/18958</a></p>
+</li>
+</ul>
+<h2 id="3-网站域名解析"><a href="#3-网站域名解析" class="headerlink" title="3. 网站域名解析"></a>3. 网站域名解析</h2><p>这里仅以阿里云服务器控制台为例，其它云服务器请参考官方说明文档。</p>
+<p>首先，选择服务器控制台中的 <code>站点设置 &gt; 域名</code>  菜单；然后点击 <code>添加域名</code> 按钮，为你的域名同时添加 ‘www’ 及 ‘@’ 记录。假设你购买的域名为 demo.com ，则同时添加的两条记录为：</p>
+<ul>
+<li>‘@’ 记录 ：demo.com</li>
+<li>‘www’ 记录：<a href="http://www.demo.com" target="_blank" rel="noopener">www.demo.com</a></li>
+</ul>
+<p>这两个域名都能访问到你的网站首页。</p>
+<img src="/2019/02/06/部署Flask项目到阿里云ECS/1549437041.png">
+<h2 id="4-SSH-远程连接"><a href="#4-SSH-远程连接" class="headerlink" title="4. SSH 远程连接"></a>4. SSH 远程连接</h2><p>通过 SSH 远程连接服务器实例，可以方便的对服务器进行管理。你可以手动输入命令生成 SSH 密钥连接服务器；也可以通过云服务器控制台自动生成密钥，然后导出密钥到本地，再使用导出的密钥连接服务器。这里推荐通过云服务器控制台生成密钥的方式。</p>
+<p>相较于传统的用户名和密码认证方式，使用 SSH 密钥有以下优势：</p>
+<ul>
+<li>SSH 密钥登录认证更为安全可靠，可以杜绝暴力破解威胁。</li>
+<li>SSH 密钥登录方式更简便，只需在控制台和本地客户端做简单配置即可远程登录实例，再次登录时无需再输入密码。</li>
+</ul>
+<h3 id="4-1-控制台生成-SSH-密钥方式（推荐）"><a href="#4-1-控制台生成-SSH-密钥方式（推荐）" class="headerlink" title="4.1 控制台生成 SSH 密钥方式（推荐）"></a>4.1 控制台生成 SSH 密钥方式（推荐）</h3><h3 id="4-2-手动生成-SSH-密钥方式"><a href="#4-2-手动生成-SSH-密钥方式" class="headerlink" title="4.2 手动生成 SSH 密钥方式"></a>4.2 手动生成 SSH 密钥方式</h3><p>在客户端的 Shell 中执行下面命令生成 SSH 密钥对：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh-keygen -t rsa -b 4096 -C <span class="string">"your_email@domain.com"</span></span></span><br></pre></td></tr></table></figure>
+<p>在客户端的 Shell 中执行下面命令授予 <code>.ssh</code> 文件夹 600 权限：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> chmod 700 ~/.ssh</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chmod 600 ~/.ssh/authorizes_keys</span></span><br></pre></td></tr></table></figure>
+<p>在客户端的 Shell 中执行下面命令将客户端私钥拷贝到服务器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 执行下面的命令会被要求输入服务器对应用户的密码，密码输入正确才能成功完成拷贝</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 记得将下面命令中的 root@47.107.132.88 替换成你自己的服务器的 SSH 地址</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ssh-copy-id -i ~/.ssh/id_rsa.pub root@47.107.132.88</span></span><br></pre></td></tr></table></figure>
+<p>在客户端的 Shell 中执行下面命令，进行 SSH 免密码登陆测试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh root@47.107.132.88</span></span><br></pre></td></tr></table></figure>
+<p>在客户端的 <code>~/.bashrc</code>  文件中为远程连接的命令取个别名，以后就可以方便的进行登陆了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vim ~/.bashrc</span></span><br></pre></td></tr></table></figure>
+<p>在文件中找到下面这一行：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># some more ls aliases</span></span><br></pre></td></tr></table></figure>
+<p>在该行代码下面再添加一行并保存，内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias ecs='ssh root@47.107.132.88'</span><br></pre></td></tr></table></figure>
+<p>在客户端的 Shell 中执行下面命令，使刚刚修改文件生效：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.bashrc</span></span><br></pre></td></tr></table></figure>
+<p>在客户端的 Shell 中执行下面命令，查看你已经设置的别名：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">alias</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="5-使用-MySQL-8-数据库"><a href="#5-使用-MySQL-8-数据库" class="headerlink" title="5. 使用 MySQL 8 数据库"></a>5. 使用 MySQL 8 数据库</h2><p>MySQL是一个关系型数据库管理系统，由瑞典MySQL AB 公司开发，目前属于 Oracle 旗下产品。MySQL 是最流行的关系型数据库管理系统之一，在 WEB 应用方面，MySQL是最好的 RDBMS (Relational Database Management System，关系数据库管理系统) 应用软件。MySQL 软件采用了双授权政策，分为社区版和商业版，由于其体积小、速度快、总体拥有成本低，尤其是开放源码这一特点，一般中小型网站的开发都选择 MySQL 作为网站数据库。</p>
+<h3 id="5-1-安装与初始化"><a href="#5-1-安装与初始化" class="headerlink" title="5.1 安装与初始化"></a>5.1 安装与初始化</h3><ol>
+<li><p>在 <a href="https://dev.mysql.com/downloads/repo/yum/" target="_blank" rel="noopener">Download MySQL Yum Repository</a> 页面获取 MySQL 8 Community Yum 仓库文件的链接，例如：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://repo.mysql.com//mysql80-community-release-el7-2.noarch.rpm</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过 SSH 远程连接服务器实例，执行下面命令切换到其它拥有 root 权限的用户，阿里云服务器实例默认有一个拥有 root 权限的 admin 用户，这里以切换到 admin 用户为例子：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> su admin</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行下面命令，下载 MySQL 8 Community Yum 仓库文件：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> wget https://repo.mysql.com//mysql80-community-release-el7-2.noarch.rpm</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行下面命令，安装 MySQL 8 Community Yum 仓库文件：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum localinstall mysql80-community-release-el7-2.noarch.rpm</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行下面命令，检查 MySQL 8 Community Yum 仓库文件是否正确安装 ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum repolist enabled | grep <span class="string">"mysql.*-community.*"</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行下面命令，安装 MySQL 8 Community ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install mysql-community-server</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>service</code> 命令管理 MySQL 服务：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo service mysqld start          <span class="comment"># 启动 MySQL 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service mysqld stop           <span class="comment"># 停止 MySQL 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service mysqld restart        <span class="comment"># 重启 MySQL 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service mysqld status         <span class="comment"># 查看 MySQL 服务状态</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>systemctl</code> 命令管理 MySQL 服务：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl start mysqld   <span class="comment"># 启动 MySQL 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl stop mysqld    <span class="comment"># 停止 MySQL 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl restart mysqld <span class="comment"># 重启 MySQL 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl status mysqld  <span class="comment"># 查看 MySQL 服务状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl <span class="built_in">enable</span> mysqld  <span class="comment"># 设置 MySQL 服务开机自启动</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl <span class="built_in">disable</span> mysqld <span class="comment"># 关闭 MySQL 服务开机自启动</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>首次启动 MySQL 服务，会自动初始化数据目录、生成 SSL 证书和密钥文件、创建超级用户 <code>&#39; root&#39;@&#39;localhost&#39;</code> ，超级用户的密码被设置并存储在错误日志文件中。可以使用以下命令查询临时密码：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo grep <span class="string">'temporary password'</span> /var/<span class="built_in">log</span>/mysqld.log</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>现在你可以用你查询到的临时密码连接数据库服务器了。</p>
+</li>
+</ol>
+<h3 id="5-2-连接数据库服务器"><a href="#5-2-连接数据库服务器" class="headerlink" title="5.2 连接数据库服务器"></a>5.2 连接数据库服务器</h3><ol>
+<li><p>输入以下命令，根据提示输入上一步获得的临时密码，连接数据库服务器：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mysql -u root -p</span></span><br><span class="line">Enter password: (在这里输入上一步查询到的临时密码)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接 MySQL 服务器后，在 MySQL 命令行中为 <code>&#39; root&#39;@&#39;localhost&#39;</code> 设置新密码，使临时密码失效：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER USER &apos;root&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;new_password&apos;;</span><br></pre></td></tr></table></figure>
+<p> [^注]: 新版 MySQL 的安全策略要求输入的密码要包含大写字母、小写字母、数字、特殊符号，推荐使用密码管理工具生成随机密码来作为你的新密码。</p>
+</li>
+<li><p>为了更加方便的远程连接 MySQL 服务器，接下来需要允许 MySQL 的 root 账户在其它地址登陆：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; USE mysql;</span><br><span class="line">mysql&gt; UPDATE user SET host = &apos;%&apos; WHERE host = &apos;root&apos;;</span><br><span class="line"># 这里的 host = &apos;%&apos; 中的 % 表示允许在任意地址登陆，你也可以设置为指定的局域网 IP、公网 IP、域名等</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接下来你就可以使用 DataGrip、Navicat 等数据库管理工具方便的管理云服务器实例上的 MySQL 了。</p>
+</li>
+</ol>
+<h2 id="6-编译安装-Python-3"><a href="#6-编译安装-Python-3" class="headerlink" title="6. 编译安装 Python 3"></a>6. 编译安装 Python 3</h2><p>Cent OS 预装了一个 Python 2，并且系统很多组件都依赖于 Python 2 ，笔者在安装和使用 Python 3 时就因为这些依赖情况遇到了很多问题，最后总结下来，正确的安装和使用 Python 3 的过程如下：</p>
+<ol>
+<li><p>远程连接云服务器实例，在本示例中将使用 root 用户通过编译安装方式全局安装 Python 3，你也可以选择单独为某个用户安装 Python 3 ，步骤上大同小异，详细编译安装文档参考 <a href="https://docs.python.org/3/using/unix.html#building-python" target="_blank" rel="noopener">Using Python on Unix platforms</a> 。</p>
+</li>
+<li><p>使用 Yum 安装编译安装 Python 3 时依赖的包：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum -y groupinstall <span class="string">"Development tools"</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yum -y install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel libffi-devel</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载 Python 3.6.7 版本的安装包，其它版本的请自行去 <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">Download Python | Python.org</a> 获取链接：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> wget https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tgz</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在当前用户目录解压下载的 Python 安装包：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tar -zxvf Python-3.6.7.tgz</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入已解压的 Python 安装文件根目录：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> Python-3.6.7</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过编译配置指定 Python 的安装位置：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./configure --prefix=/usr/<span class="built_in">local</span>/python3</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>make</code> 命令开始编译安装 Python：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> make &amp;&amp; make install</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为了和系统自带的 <code>python</code> 和 <code>pip</code> 命令区分开来，给刚刚安装的 Python 建立软链接，并为其设置命令别名。分别取名为 <code>python3</code> 、<code>pip3</code> ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/python3/bin/python3.6 /usr/bin/python3</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/python3/bin/pip3 /usr/bin/pip3</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试 Python 3 是否正确安装，输入 <code>python3</code> 命令：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> python3</span></span><br><span class="line">Python 3.6.7 (default, Feb  4 2019, 19:05:27)</span><br><span class="line">[GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux</span><br><span class="line">Type "help", "copyright", "credits" or "license" for more information.</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试 Pip 3 是否正确安装，输入 <code>pip3</code> 命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip3 -V</span></span><br><span class="line">pip 10.0.0 from /usr/local/python3/lib/python3.6/site-packages/pip (python 3.6)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更新 Pip ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip3 install --upgrade pip</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="7-使用-Pipenv-管理-Python-虚拟环境"><a href="#7-使用-Pipenv-管理-Python-虚拟环境" class="headerlink" title="7. 使用 Pipenv 管理 Python 虚拟环境"></a>7. 使用 Pipenv 管理 Python 虚拟环境</h2><p>Pipenv 是 Pipfile 主要倡导者、requests 作者 Kenneth Reitz 写的一个命令行工具，主要包含了 Pipfile、pip、click、requests 和 virtualenv ，使用 Pipenv 可以方便的管理 Python 虚拟环境、管理依赖文件。Pipfile 和 Pipenv本来都是Kenneth Reitz 的个人项目，后来贡献给了 pypa 组织。Pipfile 是社区拟定的依赖管理文件，用于替代过于简陋的 requirements.txt 文件。</p>
+<ol>
+<li><p>执行下面命令，安装 Pipenv ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip3 install pipenv</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行下面命令，为 Pipenv 可执行文件设置软链接，之后可以通过 <code>pipenv</code> 命令来使用 Pipenv ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/python3/bin/pipenv /usr/bin/pipenv</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换到一个拥有 root 权限的用户，这里以 admin 用户为例：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> su admin</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在用户目录下为你的项目创建一个目录，并进入项目目录，项目名称以 FlaskApp 为例：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> ~</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mkdir FlaskApp</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> FlaskApp</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行下面命令，为项目创建 Python 虚拟环境，默认将虚拟环境保存在 <code>~/.local/share/virtualenvs</code>：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pipenv install</span></span><br></pre></td></tr></table></figure>
+<p> 如果想把虚拟环境保存至项目根目录，需要设置环境变量 <code>PIPENV_VENV_IN_PROJECT=1</code> ，再执行创建命令：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">export</span> PIPENV_VENV_IN_PROJECT=1</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> pipenv install</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>虚拟环境创建完成后，执行下面命令为虚拟环境安装 Flask 包：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pipenv install flask</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在项目根目录编写一个简单的 Flask Demo 进行测试：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 新建并打开一个名为 app.py 的文件</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vim app.py</span></span><br></pre></td></tr></table></figure>
+<p> 输入下面的代码并保存：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_flask</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Hello Flask!'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>pipenv run</code> 调用虚拟环境中的 Python 执行 <code>flask run</code> 命令可以运行编写的代码：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pipenv run flask run</span></span><br></pre></td></tr></table></figure>
+<p> 也可以使用 <code>pipenv shell</code> 命令进入虚拟环境，然后再在虚拟环境执行 <code>flask run</code> 命令运行程序：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pipenv shell</span></span><br><span class="line"><span class="meta">(venv)$</span><span class="bash"> flask run</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Flask 默认运行的地址和端口为 <a href="http://127.0.0.1:5000" target="_blank" rel="noopener">http://127.0.0.1:5000</a> ，云服务器实例不包含桌面环境的话，你很难去浏览这个页面。你可以设置 flask 运行的地址和端口，然后尝试从外网访问该页面。先执行下面命令，让 flask 允许外网访问，并且监听 80 端口：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pipenv run flask run --host 0.0.0.0 --port 80</span></span><br></pre></td></tr></table></figure>
+<p> 然后你可以通过你的服务器公网 IP 或 域名 直接访问到该页面。</p>
+</li>
+</ol>
+<h2 id="8-使用-Gunicorn-运行程序"><a href="#8-使用-Gunicorn-运行程序" class="headerlink" title="8. 使用 Gunicorn 运行程序"></a>8. 使用 Gunicorn 运行程序</h2><p><code>flask run</code> 命令启动的开发服务器是由 Werkzeug 提供的。细分的话， Werkzeug 提供的这个开发服务器应该被称为 WSGI 服务器，而不是单纯意义上的 Web 服务器。在生产环境中，我们需要一个更强健、性能更高的 WSGI 服务器。这些 WSGI 服务器也被称为独立 WSGI 容器，因为它们可以承载我们编写的 WSGI 程序，然后处理 HTTP 请求和响应。这通常有很多选择，比如 <a href="https://gunicorn.org/" target="_blank" rel="noopener">Gunicorn</a> 。  Gunicorn 是 Green Unicorn 的简写，意为绿色独角兽，是一款专为 UNIX 设计的 Python WSGI HTTP 服务器。是一个Pre-fork 工人模型。Gunicorn 服务器广泛兼容各种 web 框架，实现简单，节省服务器资源，速度相当快。</p>
+<ol>
+<li><p>安装 Gunicorn ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pipenv install gunicorn</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 Gunicorn 运行一个 WSGI 程序：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pipenv run gunicorn --workers=4 --<span class="built_in">bind</span>=0.0.0.0:8000 app:app</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> --workers = 4 表示使用 4 worker 进程运行程序，建议 worker 数量为 ( CPU 核心数 × 2 ) + 1</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Gunicorn 默认只允许从本地 8000 端口访问，--<span class="built_in">bind</span>=0.0.0.0:8000 表示允许使用 8000 端口从外部访问</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> app:app 冒号前面的 app 表示 app.py 文件，冒号后面的 app 表示 flask 程序的名称</span></span><br></pre></td></tr></table></figure>
+<p> 也可以把 <code>--workers</code> 简写为 <code>-w</code> 、<code>--bind</code> 简写为 <code>-b</code> ，如下：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 没有 -b 或者 --<span class="built_in">bind</span> 参数，默认监听 127.0.0.1:8000</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> pipenv run gunicorn -w 4 app:app</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 指定 -b 0.0.0.0:8000 监听 8000 端口的外部请求</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> pipenv run gunicorn -w 4 -b 0.0.0.0:8000 app:app</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="9-使用-Nginx-提供反向代理"><a href="#9-使用-Nginx-提供反向代理" class="headerlink" title="9. 使用 Nginx 提供反向代理"></a>9. 使用 Nginx 提供反向代理</h2><p>像 Gunicorn 这类 WSGI 服务器内置的 Web 服务器还不够强健，虽然程序可以正常运行，但是更流行的部署方式是使用一个常规的 Web 服务器运行在前端，为 WSGI 提供反向代理。比较流行的开源 Web 服务器有 Nginx 、Apache 等，这里选择使用和 Gunicorn 集成良好的 Nginx 。</p>
+<ol>
+<li><p>访问 <a href="http://nginx.org/packages/" target="_blank" rel="noopener">nginx packages</a> 获取对应版本 Nginx 的 Yum 仓库的链接，例如：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载 Nginx Yum 仓库文件：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> wget http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装 Nginx Yum 仓库文件：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum localinstall nginx-release-centos-7-0.el7.ngx.noarch.rpm</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装 Nginx ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install nginx</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入 Nginx 配置文件目录：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> /etc/nginx/</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建 cert 目录，并上传你的 SSL 证书到该目录：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir cert</span></span><br></pre></td></tr></table></figure>
+<p> 上传 SSL 证书到 cert 目录你可以使用 <code>scp</code> 命令，或者使用 FileZilla 等 SFTP 软件，我上传的文件如下：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> cert</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls</span></span><br><span class="line">ssl.key  ssl.pem</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入 <code>/etc/nginx/conf.d/</code>  目录编辑默认的配置文件 <code>default.conf</code>：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> /etc/nginx/conf.d/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vim default.conf</span></span><br></pre></td></tr></table></figure>
+<p> 删除文件中原有的全部内容，新增下面内容并保存：</p>
+ <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监听 http 请求，强制跳转到 https</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen      80;</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这里的 your.domain.com 换成你购买的域名</span></span><br><span class="line">    server_name your.domain.com;</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这里的 your.domain.com 换成你购买的域名</span></span><br><span class="line">    return 301 https://your.domain.com$request_uri;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 监听 https 请求</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen      443;</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这里的 your.domain.com 换成你购买的域名</span></span><br><span class="line">    server_name your.domain.com;</span><br><span class="line">    </span><br><span class="line">    access_log  /var/log/nginx/host.access.log;</span><br><span class="line">    error_log   /var/log/nginx/host.error.log;</span><br><span class="line"></span><br><span class="line">    ssl on;</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这部分的 ssl.pem ssl.key 换成你上传的与其对应的文件</span></span><br><span class="line">    ssl_certificate             cert/ssl.pem;</span><br><span class="line">    ssl_certificate_key         cert/ssl.key;</span><br><span class="line"></span><br><span class="line">    ssl_session_cache           shared:SSL:1m;</span><br><span class="line">    ssl_session_timeout         5m;</span><br><span class="line"></span><br><span class="line">    ssl_protocols               TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">    ssl_ciphers                 ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    ssl_prefer_server_ciphers   on;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        <span class="comment"># 转发请求给 Gunicorn</span></span><br><span class="line">        proxy_pass      http://127.0.0.1:8000;</span><br><span class="line">        proxy_redirect  off;</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 为了能正常运行，重写请求头</span></span><br><span class="line">        proxy_set_header    Host                $host;</span><br><span class="line">        proxy_set_header    X-Real-IP           $remote_addr;</span><br><span class="line">        proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;</span><br><span class="line">        proxy_set_header    X-Forwarded-Proto   $scheme;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 处理静态文件夹中的静态文件</span></span><br><span class="line">    location /static &#123;</span><br><span class="line">        alias   /home/admin/FlaskApp/static/;</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 设置静态文件缓存过期时间为 30 天</span></span><br><span class="line">        expires  30d;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试配置正确性：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx -t</span></span><br></pre></td></tr></table></figure>
+<p> 如果出现的提示中没有报错，则可以启动 nginx 了。</p>
+</li>
+<li><p>启动 nginx ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx</span></span><br></pre></td></tr></table></figure>
+<p> 现在，你可以使用 Gunicorn 不指定 <code>--bind</code> 参数运行 Flask 程序，然后尝试从外网通过 HTTPS 访问，判断 nginx 反向代理是否设置成功。</p>
+</li>
+<li><p>使用 <code>nginx</code> 命令管理 Nginx ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx            <span class="comment"># 启动 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx -s stop    <span class="comment"># 关闭 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx -s reload  <span class="comment"># 重载 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx -s reopen  <span class="comment"># 重启 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx -s quit    <span class="comment"># 退出 Nginx 服务</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>service</code> 命令管理 Nginx 服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo service nginx start          <span class="comment"># 启动 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service nginx stop           <span class="comment"># 停止 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service nginx restart        <span class="comment"># 重启 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service nginx status         <span class="comment"># 查看 Nginx 服务状态</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>systemctl</code> 命令管理 Nginx 服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl start nginx   <span class="comment"># 启动 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl stop nginx    <span class="comment"># 停止 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl restart nginx <span class="comment"># 重启 Nginx 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl status nginx  <span class="comment"># 查看 Nginx 服务状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl <span class="built_in">enable</span> nginx  <span class="comment"># 设置 Nginx 服务开机自启动</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl <span class="built_in">disable</span> nginx <span class="comment"># 关闭 Nginx 服务开机自启动</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果 Nginx 已经启动却又被启动了一次，可能会报错。比如：找不到 <code>nginx.pid</code> 文件、提示 XX 端口已经被使用等等…，解决办法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 杀掉占用 80 端口的进程</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo fuser -k 80/tcp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 杀掉占用 443 端口的进程</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo fuser -k 443/tcp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用默认配置文件重新启动 Nginx</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo nginx -c /etc/nginx/nginx.conf</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="10-使用-Supervisor-管理进程"><a href="#10-使用-Supervisor-管理进程" class="headerlink" title="10. 使用 Supervisor 管理进程"></a>10. 使用 Supervisor 管理进程</h2><p><a href="http://www.supervisord.org/" target="_blank" rel="noopener">Supervisor</a> 是用 Python 开发的一套通用的进程管理程序，能将一个普通的命令行进程变为后台 daemon ，并监控进程状态，异常退出时能自动重启。它是通过 fork/exec 的方式把这些被管理的进程当作 Supervisor 的子进程来启动，这样只要在 Supervisor 的配置文件中把要管理的进程的可执行文件的路径写进去即可。也实现当子进程挂掉的时候，父进程可以准确获取子进程挂掉的信息的，可以选择是否自己启动和报警。Supervisor 还提供了一个功能，可以为 supervisord 或者每个子进程设置一个非 root 的用户，这个用户就可以管理它对应的进程。</p>
+<ol>
+<li><p>安装 Supervisor ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install supervisor</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查 Supervisor 配置文件：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vim /etc/supervisord.conf</span></span><br></pre></td></tr></table></figure>
+<p> 找到最后一行，检查是否是如下内容：</p>
+ <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[include]</span></span><br><span class="line"><span class="attr">files</span> = supervisord.d/*.ini</span><br></pre></td></tr></table></figure>
+<p> 如果不是，则修改文件使其跟上面内容一致。</p>
+</li>
+<li><p>进入 <code>/etc/supervisord.d/</code> 目录， 为项目创建一个 Supervisor 配置文件：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> /etc/supervisord.d/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vi FlaskApp.ini</span></span><br></pre></td></tr></table></figure>
+<p> 配置文件内容为：</p>
+ <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[program:app]</span></span><br><span class="line"><span class="comment">; 下面命令中的 app:app 请修改为你实际部署时的项目名称</span></span><br><span class="line"><span class="attr">command</span>=pipenv run gunicorn -w <span class="number">4</span> app:app</span><br><span class="line"></span><br><span class="line"><span class="comment">; 下面的路径请修改为你创建的项目的根目录</span></span><br><span class="line"><span class="attr">directory</span>=/home/admin/FlaskApp</span><br><span class="line"></span><br><span class="line"><span class="attr">autostart</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">autorestart</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">stopsignal</span>=QUIT</span><br><span class="line"><span class="attr">stopasgroup</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">killasgroup</span>=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; 下面的用户请修改为创建该项目的用户</span></span><br><span class="line"><span class="attr">user</span>=admin</span><br><span class="line"></span><br><span class="line"><span class="attr">redirect_stderr</span>=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; log 文件的路径你可以重新自定义</span></span><br><span class="line"><span class="attr">stdout_logfile</span>=/home/admin/FlaskApp/log/supervisor.log</span><br><span class="line"></span><br><span class="line"><span class="comment">; 解决编码问题</span></span><br><span class="line"><span class="section">[supervisord]</span></span><br><span class="line"><span class="attr">environment</span>=LC_ALL=<span class="string">'en_US.UTF-8'</span>,LANG=<span class="string">'en_US.UTF-8'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动 Supervisor ：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> supervisord -c /etc/supervisord.conf</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>service</code> 命令管理 Supervisor 服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo service supervisord start          <span class="comment"># 启动 Supervisor 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service supervisord stop           <span class="comment"># 停止 Supervisor 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service supervisord restart        <span class="comment"># 重启 Supervisor 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo service supervisord status         <span class="comment"># 查看 Supervisor 服务状态</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>systemctl</code> 命令管理 Supervisor 服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl start supervisord   <span class="comment"># 启动 Supervisor 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl stop supervisord    <span class="comment"># 停止 Supervisor 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl restart supervisord <span class="comment"># 重启 Supervisor 服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl status supervisord  <span class="comment"># 查看 Supervisor 服务状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl <span class="built_in">enable</span> supervisord  <span class="comment"># 设置 Supervisor 服务开机自启动</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl <span class="built_in">disable</span> supervisord <span class="comment"># 关闭 Supervisor 服务开机自启动</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入 Supervisor 控制台，管理后台进程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo supervisorctl</span></span><br><span class="line">app                              RUNNING   pid 2696, uptime 23:46:00</span><br><span class="line">supervisor &gt; help # 输入 help 命令，查看 supervisor 支持的命令</span><br><span class="line"></span><br><span class="line">default commands (type help &lt;topic&gt;):</span><br><span class="line">=====================================</span><br><span class="line">add    clear  fg        open  quit    remove  restart   start   stop  update</span><br><span class="line">avail  exit   maintail  pid   reload  reread  shutdown  status  tail  version</span><br></pre></td></tr></table></figure>
+<p>使用 <code>status</code> 命令，查看正在运行的后台进程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">supervisor&gt;</span><span class="bash"> status</span></span><br><span class="line">app                              RUNNING   pid 2696, uptime 23:49:37</span><br></pre></td></tr></table></figure>
+<p>使用 <code>stop</code> 命令，结束指定的进程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">supervisor&gt;</span><span class="bash"> stop app</span></span><br><span class="line">app: stopped</span><br></pre></td></tr></table></figure>
+<p>使用 <code>start</code> 命令，启动指定的进程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">supervisor&gt;</span><span class="bash"> start app</span></span><br><span class="line">app: started</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试，你可以先使用 Supervisor 运行进程，再通过外网访问页面，检查是否正常访问；再结束进程，看看页面是否显示 <em>502 Bad Gateway</em> 。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="Jason wechat" style="width: 200px; max-width: 100%;"/>
+    <div>更多内容请关注微信公众号</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/Flask/" rel="tag"># Flask</a>
+          
+            <a href="/tags/CentOS/" rel="tag"># CentOS</a>
+          
+            <a href="/tags/Pipenv/" rel="tag"># Pipenv</a>
+          
+            <a href="/tags/Gunicorn/" rel="tag"># Gunicorn</a>
+          
+            <a href="/tags/Supervisor/" rel="tag"># Supervisor</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/23/Flask/" rel="next" title="Python 轻量级 Web 应用框架 Flask 快速入门">
+                <i class="fa fa-chevron-left"></i> Python 轻量级 Web 应用框架 Flask 快速入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="Jason" />
+            
+              <p class="site-author-name" itemprop="name">Jason</p>
+              <p class="site-description motion-element" itemprop="description">程序猿一枚</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/hovenjay" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:hewenjie1996@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://segmentfault.com/blog/jasonhe" target="_blank" title="思否"><i class="fa fa-fw fa-globe"></i>思否</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://zhihu.com/people/hovenjay" target="_blank" title="知乎"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://chunrichi.github.io/" title="石头的博客" target="_blank">石头的博客</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-购买域名、服务器、SSL-证书"><span class="nav-text">1. 购买域名、服务器、SSL 证书</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-域名"><span class="nav-text">1.1 域名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-服务器"><span class="nav-text">1.2 服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-SSL-证书"><span class="nav-text">1.3 SSL 证书</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-网站备案"><span class="nav-text">2. 网站备案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-网站域名解析"><span class="nav-text">3. 网站域名解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-SSH-远程连接"><span class="nav-text">4. SSH 远程连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-控制台生成-SSH-密钥方式（推荐）"><span class="nav-text">4.1 控制台生成 SSH 密钥方式（推荐）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-手动生成-SSH-密钥方式"><span class="nav-text">4.2 手动生成 SSH 密钥方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-使用-MySQL-8-数据库"><span class="nav-text">5. 使用 MySQL 8 数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-安装与初始化"><span class="nav-text">5.1 安装与初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-连接数据库服务器"><span class="nav-text">5.2 连接数据库服务器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-编译安装-Python-3"><span class="nav-text">6. 编译安装 Python 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-使用-Pipenv-管理-Python-虚拟环境"><span class="nav-text">7. 使用 Pipenv 管理 Python 虚拟环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-使用-Gunicorn-运行程序"><span class="nav-text">8. 使用 Gunicorn 运行程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-使用-Nginx-提供反向代理"><span class="nav-text">9. 使用 Nginx 提供反向代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-使用-Supervisor-管理进程"><span class="nav-text">10. 使用 Supervisor 管理进程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
